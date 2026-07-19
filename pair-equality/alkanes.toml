@@ -1,0 +1,6 @@
+[contract]
+name = "PairEquality"
+
+[opcodes]
+initialize = 0
+filter = 7

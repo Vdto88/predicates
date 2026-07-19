@@ -1,0 +1,10 @@
+package example:pair-equality;
+
+interface pair-equality {
+    initialize: func() -> result<_, string>;
+    filter: func(sequence-left: u64, amount-left: u64, sequence-right: u64, amount-right: u64) -> result<_, string>;
+}
+
+world pair-equality-world {
+    export pair-equality;
+}

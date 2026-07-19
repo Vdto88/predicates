@@ -1,78 +1,59 @@
 //! Pair Equality Predicate Alkane Contract
 //!
 //! A secure and efficient predicate alkane contract that enforces the quantities
-//! of alkanes sent to it in a two-party trade. This contract follows current best
-//! practices and security patterns.
+//! of alkanes sent to it in a two-party trade.
+//!
+//! ABI is declared in `contract.wit` + `alkanes.toml` (opcode 0 = initialize,
+//! opcode 7 = filter); dispatch/entry points are generated at build time by
+//! `alkanes-wit-build` (see build.rs) — no hand-rolled opcode enum.
 
-use alkanes_runtime::{declare_alkane, runtime::AlkaneResponder, message::MessageDispatch};
-use alkanes_runtime::storage::StoragePointer;
+// Include the generated code from WIT codegen
+#[allow(unused_imports, dead_code, clippy::all)]
+mod generated {
+    include!(concat!(env!("OUT_DIR"), "/generated.rs"));
+}
+
+use alkanes_runtime::runtime::AlkaneResponder;
+use alkanes_support::id::AlkaneId;
 use alkanes_support::response::CallResponse;
 use anyhow::{anyhow, Result};
-use alkanes_support::id::AlkaneId;
-use metashrew_support::compat::to_arraybuffer_layout;
-use metashrew_support::index_pointer::KeyValuePointer;
 
-/// EqualityPredicate trait provides common predicate functionality
-pub trait EqualityPredicate: AlkaneResponder {
-    /// Observe initialization to prevent multiple initializations
-    fn observe_initialization(&self) -> Result<()> {
-        let mut pointer = StoragePointer::from_keyword("/initialized");
-        if pointer.get().len() == 0 {
-            pointer.set_value::<u8>(0x01);
-            Ok(())
-        } else {
-            Err(anyhow!("already initialized"))
-        }
-    }
-}
+use generated::PairEqualityInterface;
 
-/// EqualityPredicate implements a predicate contract that enforces equality in a two-party trade
+/// EqualityPredicate implements a predicate contract that enforces equality
+/// in a two-party trade. The struct name must match `[contract] name` in
+/// alkanes.toml — the generated entry points reference `super::PairEquality`.
 #[derive(Default)]
-pub struct EqualityPredicateAlkane(());
+pub struct PairEquality(());
 
-impl EqualityPredicate for EqualityPredicateAlkane {}
+/// Back-compat alias for the pre-WIT name (kept for the Rust test target).
+pub type EqualityPredicateAlkane = PairEquality;
 
-/// Message enum for opcode-based dispatch
-#[derive(MessageDispatch)]
-enum EqualityPredicateAlkaneMessage {
-    /// Initialize the contract
-    #[opcode(0)]
-    Initialize,
-    
-    /// Filter alkanes based on sequence and amount
-    #[opcode(7)]
-    Filter { 
-        sequence_left: u128, 
-        amount_left: u128, 
-        sequence_right: u128, 
-        amount_right: u128 
-    },
-}
-
-impl EqualityPredicateAlkane {
-    fn initialize(&self) -> Result<CallResponse> {
-        let context = self.context()?;
-        let response = CallResponse::forward(&context.incoming_alkanes);
-        EqualityPredicate::observe_initialization(self)
-            .map_err(|_| anyhow!("Contract already initialized"))?;
-        Ok(response)
-    }
-    
-    // Make the filter method public for testing
-    pub fn filter(&self, sequence_left: u128, amount_left: u128, sequence_right: u128, amount_right: u128) -> Result<CallResponse> {
+impl PairEquality {
+    /// Filter logic, kept as a public inherent method for testing.
+    /// Error strings are LOAD-BEARING: the subfrost-app devnet e2e suite
+    /// asserts on them — do not rephrase.
+    pub fn filter(
+        &self,
+        sequence_left: u128,
+        amount_left: u128,
+        sequence_right: u128,
+        amount_right: u128,
+    ) -> Result<CallResponse> {
         let context = self.context()?;
         let incoming_alkanes = &context.incoming_alkanes;
         if incoming_alkanes.0.len() != 2 {
             return Err(anyhow!("EqualityPredicate only handles 2 alkanes"));
         }
-        
+
         let left_id = AlkaneId { block: 2, tx: sequence_left };
         let right_id = AlkaneId { block: 2, tx: sequence_right };
-        
-        if incoming_alkanes.0[0].id == left_id && 
-           incoming_alkanes.0[0].value == amount_left && 
-           incoming_alkanes.0[1].id == right_id && 
-           incoming_alkanes.0[1].value == amount_right {
+
+        if incoming_alkanes.0[0].id == left_id
+            && incoming_alkanes.0[0].value == amount_left
+            && incoming_alkanes.0[1].id == right_id
+            && incoming_alkanes.0[1].value == amount_right
+        {
             Ok(CallResponse::forward(incoming_alkanes))
         } else {
             Err(anyhow!("EqualityPredicate failed: alkanes do not match required parameters"))
@@ -80,11 +61,24 @@ impl EqualityPredicateAlkane {
     }
 }
 
-impl AlkaneResponder for EqualityPredicateAlkane {}
+impl AlkaneResponder for PairEquality {}
 
-// Use the MessageDispatch macro for opcode handling
-declare_alkane! {
-    impl AlkaneResponder for EqualityPredicateAlkane {
-        type Message = EqualityPredicateAlkaneMessage;
+impl PairEqualityInterface for PairEquality {
+    fn initialize(&self) -> Result<CallResponse> {
+        let context = self.context()?;
+        let response = CallResponse::forward(&context.incoming_alkanes);
+        self.observe_initialization()
+            .map_err(|_| anyhow!("Contract already initialized"))?;
+        Ok(response)
+    }
+
+    fn filter(
+        &self,
+        sequence_left: u128,
+        amount_left: u128,
+        sequence_right: u128,
+        amount_right: u128,
+    ) -> Result<CallResponse> {
+        PairEquality::filter(self, sequence_left, amount_left, sequence_right, amount_right)
     }
 }
