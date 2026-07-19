@@ -16,8 +16,20 @@ This commit pins everything needed to rebuild `pair_equality.wasm`
 ## Build
 
 Prerequisites: Rust `1.86.0` (pinned by `rust-toolchain.toml` — same channel
-alkanes-rs develop pins; installed automatically by rustup) and `protoc` on
-PATH (set `PROTOC=/path/to/protoc` if not auto-detected).
+alkanes-rs develop pins; installed automatically by rustup), `protoc` on
+PATH (set `PROTOC=/path/to/protoc` if not auto-detected), and **clang 16.0.0
+from wasi-sdk release 20** as the C compiler for the wasm target:
+
+```bash
+export CC_wasm32_unknown_unknown=/path/to/wasi-sdk/bin/clang
+```
+
+The C compiler is part of byte-exact reproducibility: `secp256k1-sys 0.10.1`
+(pulled via alkanes-support → bitcoin) compiles vendored C into the final
+wasm through the `cc` crate. A different clang version produces different
+object code and therefore a different artifact hash. wasi-sdk 20's clang
+defaults to `wasm32-unknown-wasi`; the `cc` crate retargets it to
+`wasm32-unknown-unknown` automatically.
 
 ```bash
 cargo build --release --target wasm32-unknown-unknown -p pair-equality
