@@ -6,11 +6,11 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-alkanes-support = { git = "https://github.com/kungfuflex/alkanes-rs" }
-alkanes-runtime = { git = "https://github.com/kungfuflex/alkanes-rs" }
-metashrew-support = { git = "https://github.com/kungfuflex/alkanes-rs" }
-protorune-support = { git = "https://github.com/kungfuflex/alkanes-rs" }
-ordinals = { git = "https://github.com/kungfuflex/alkanes-rs" }
+alkanes-support = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b" }
+alkanes-runtime = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b" }
+metashrew-support = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b" }
+protorune-support = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b" }
+ordinals = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b" }
 anyhow = "1.0.94"
 bitcoin = { version = "0.32.4", features = ["rand"] }
 once_cell = "1.19.0"
