@@ -53,7 +53,7 @@ impl EqualityPredicateAlkane {
     fn initialize(&self) -> Result<CallResponse> {
         let context = self.context()?;
         let response = CallResponse::forward(&context.incoming_alkanes);
-        self.observe_initialization()
+        EqualityPredicate::observe_initialization(self)
             .map_err(|_| anyhow!("Contract already initialized"))?;
         Ok(response)
     }
@@ -80,12 +80,7 @@ impl EqualityPredicateAlkane {
     }
 }
 
-impl AlkaneResponder for EqualityPredicateAlkane {
-    fn execute(&self) -> Result<CallResponse> {
-        // This method should not be called directly when using MessageDispatch
-        Err(anyhow!("This method should not be called directly. Use the declare_alkane macro instead."))
-    }
-}
+impl AlkaneResponder for EqualityPredicateAlkane {}
 
 // Use the MessageDispatch macro for opcode handling
 declare_alkane! {

@@ -20,7 +20,7 @@ bitcoin.workspace = true
 [dev-dependencies]
 once_cell.workspace = true
 wasm-bindgen-test.workspace = true
-alkanes-runtime = { git = "https://github.com/kungfuflex/alkanes-rs", features = ["test-utils"] }
+alkanes-runtime = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b", features = ["test-utils"] }
 
 [features]
 default = []
