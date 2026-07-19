@@ -11,16 +11,18 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 alkanes-support.workspace = true
 alkanes-runtime.workspace = true
+# metashrew-support is referenced by the WIT-generated entry points
+# (to_arraybuffer_layout / to_passback_ptr), not by lib.rs directly.
 metashrew-support.workspace = true
-protorune-support.workspace = true
-ordinals.workspace = true
 anyhow.workspace = true
-bitcoin.workspace = true
+
+[build-dependencies]
+alkanes-wit-build = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "ad27105f" }
 
 [dev-dependencies]
 once_cell.workspace = true
 wasm-bindgen-test.workspace = true
-alkanes-runtime = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "888f4fe6f407797a75b11e0074a1ba0e055cd33b", features = ["test-utils"] }
+alkanes-runtime = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "ad27105f", features = ["test-utils"] }
 
 [features]
 default = []
