@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "pair-equality",
+    "pair-equality-generic",
 ]
 
 resolver = "2"

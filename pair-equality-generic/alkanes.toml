@@ -1,0 +1,6 @@
+[contract]
+name = "PairEqualityGeneric"
+
+[opcodes]
+initialize = 0
+filter = 7

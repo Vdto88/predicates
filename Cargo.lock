@@ -763,6 +763,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "pair-equality-generic"
+version = "0.1.0"
+dependencies = [
+ "alkanes-runtime",
+ "alkanes-support",
+ "alkanes-wit-build",
+ "anyhow",
+ "metashrew-support 10.0.0-alpha.1 (git+https://github.com/kungfuflex/metashrew?rev=eca790ca1eeddc7cdac201b741637b8f18234924)",
+]
+
+[[package]]
 name = "petgraph"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"

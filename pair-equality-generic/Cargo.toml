@@ -1,0 +1,24 @@
+[package]
+name = "pair-equality-generic"
+version = "0.1.0"
+edition = "2021"
+description = "Generic pair-equality predicate: full (block, tx) id per leg instead of a hardcoded block:2 — validates non-block-2 alkanes (frBTC [32:0] et al)"
+authors = ["flex"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+alkanes-support.workspace = true
+alkanes-runtime.workspace = true
+# metashrew-support is referenced by the WIT-generated entry points
+# (to_arraybuffer_layout / to_passback_ptr), not by lib.rs directly.
+metashrew-support.workspace = true
+anyhow.workspace = true
+
+[build-dependencies]
+alkanes-wit-build = { git = "https://github.com/kungfuflex/alkanes-rs", rev = "ad27105f" }
+
+[features]
+default = []
+test = []

@@ -1,0 +1,10 @@
+package example:pair-equality-generic;
+
+interface pair-equality-generic {
+    initialize: func() -> result<_, string>;
+    filter: func(block-left: u64, sequence-left: u64, amount-left: u64, block-right: u64, sequence-right: u64, amount-right: u64) -> result<_, string>;
+}
+
+world pair-equality-generic-world {
+    export pair-equality-generic;
+}
